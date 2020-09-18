@@ -33,11 +33,11 @@ export default class ResumeForm extends ValidationComponent {
         ).then((response) => {
           Alert.alert(
             'Create success',
-            'Click OK go to resume detail page',
+            'Click OK go to resume details page',
             [{
               test: 'OK',
               onPress: () => {
-                this.props.navigation.push('ResumeDetail', { id: response.data.id })
+                this.props.navigation.push('ResumeDetails', { id: response.data.id })
               }
             }]
           )
