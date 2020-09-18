@@ -12,30 +12,33 @@ export default () => {
       setHasPermission(status === 'granted')
     })();
   }, [])
-  if(hasPermission === null) {
+  if (hasPermission === null) {
     return <View />
-  }else if (hasPermission === false) {
+  } else if (hasPermission === false) {
     return <Text>No access to camera</Text>
   }
-  return (
-    <View>
-      <Camera
-        ref={ref => { this.camera = ref }}
-        type={Camera.Constants.Type.front}
-        style={styles.camera}
-      ></Camera>
-    </View>
-  )
+  if(picture) {
+    return <Image style={styles.avatar} source={{ uri: picture }} />
+  } else if (takePictureMode) {
+    return (
+      <View style={styles.cameraContainer}>
+        <Camera
+          ref={ref => { this.camera = ref }}
+          type={Camera.Constants.Type.front}
+          style={styles.camera}
+        ></Camera>
+      </View>
+    )
+  } else {
+    return <Button
+              onPress={() => setTakePictureMode(true)}
+              title="Take Photo" 
+           />
+  }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: 400,
-    marginBottom: 20,
-  },
-  camera: {
-    width:'100%',
-    height: 300,
-  }
+  avatar: { width: '100%', height: 360, marginBottom: 20 },
+  cameraContainer: { width: '100%', height: 400, marginBottom: 20 },
+  camera: { width: '100%', height: 360 },
 })
