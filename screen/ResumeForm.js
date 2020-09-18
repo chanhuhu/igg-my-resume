@@ -1,7 +1,7 @@
-
-import React from "react"
+import axios from 'axios'
+import React from 'react'
 import ValidationComponent from 'react-native-form-validator'
-import {StyleSheet, View,Text,TextInput,Button} from 'react-native'
+import { StyleSheet, View, Text, TextInput, Button, Alert } from 'react-native'
 
 export default class ResumeForm extends ValidationComponent {
     state = {
@@ -12,13 +12,39 @@ export default class ResumeForm extends ValidationComponent {
     }
 
     _onSubmit = () => {
-        this.validate({
-            name : {required: true},
-            nickname: {required: true},
-            age: {required:true, numbers:true},
-            skill: {required:true}
+      const isValid = this.validate({
+        name : {required: true},
+        nickname: {required: true},
+        age: {required:true,numbers:true},
+        skill: {required:true}
+      })
+      if (isValid) {
+        const formData = new FormData();
+        formData.append('name', this.state.name)
+        formData.append('nickname', this.state.nickname)
+        formData.append('age', this.state.age)
+        formData.append('skill', this.state.skill)
+        axios.post(
+          'https://movie-api.igeargeek.com/users/register',
+          formData,
+          {
+            headers: { 'content-type': 'multipart/form-data' }
+          }
+        ).then((response) => {
+          Alert.alert(
+            'Create success',
+            'Click OK go to resume detail page',
+            [{
+              test: 'OK',
+              onPress: () => {
+                this.props.navigation.push('ResumeDetail', { id: response.data.id })
+              }
+            }]
+          )
+        }).catch((err) => {
+          console.log('api error', err)
         })
-
+      }
     }
 
     render(){
@@ -61,7 +87,7 @@ export default class ResumeForm extends ValidationComponent {
 const styles = StyleSheet.create({
     container:{
         padding:30,
-        backgroundColor:'while',
+        backgroundColor:'white',
         minHeight:"100%"
     },
     textInput:{
